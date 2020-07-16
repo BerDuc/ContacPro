@@ -145,4 +145,10 @@ C:\Users\Bernard\source\repos\ContacPro-Serveur\ContacPro-Serveur\bin\Debug\netc
 C:\Users\Bernard\source\repos\ContacPro-Serveur\ContacPro-Serveur\bin\Debug\netcoreapp3.1\System.Web.Http.dll
 C:\Users\Bernard\source\repos\ContacPro-Serveur\ContacPro-Serveur\bin\Debug\netcoreapp3.1\System.Web.Http.Cors.dll
 C:\Users\Bernard\source\repos\ContacPro-Serveur\ContacPro-Serveur\bin\Debug\netcoreapp3.1\Newtonsoft.Json.Bson.dll
+C:\Users\Bernard\source\repos\ContacPro-Serveur\ContacPro-Serveur\obj\Debug\netcoreapp3.1\ContacPro-Serveur.genruntimeconfig.cache
+C:\Users\Bernard\source\repos\ContacPro-Serveur\ContacPro-Serveur\obj\Debug\netcoreapp3.1\ContacPro-Serveur.csproj.CoreCompileInputs.cache
 C:\Users\Bernard\source\repos\ContacPro-Serveur\ContacPro-Serveur\obj\Debug\netcoreapp3.1\ContacPro-Serveur.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Bernard\source\repos\ContacPro-Serveur\ContacPro-Serveur\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\Bernard\source\repos\ContacPro-Serveur\ContacPro-Serveur\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Logging.dll
+C:\Users\Bernard\source\repos\ContacPro-Serveur\ContacPro-Serveur\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Tokens.dll
+C:\Users\Bernard\source\repos\ContacPro-Serveur\ContacPro-Serveur\bin\Debug\netcoreapp3.1\System.IdentityModel.Tokens.Jwt.dll

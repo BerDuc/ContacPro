@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ContacPro_Serveur.DAL;
 using ContacPro_Serveur.Models;
-using ContacPro_Serveur.DataProviders;
 using Newtonsoft.Json.Linq;
+using ContacPro_Serveur.Providers;
+using Microsoft.Extensions.Configuration;
+
 
 namespace ContacPro_Serveur.Controllers
 {
@@ -17,18 +19,40 @@ namespace ContacPro_Serveur.Controllers
     public class ProfessionnelsController : ControllerBase
     {
         private readonly ContacProDBContext _context;
+        private readonly IConfiguration configuration;
 
-        public ProfessionnelsController(ContacProDBContext context)
+
+        public ProfessionnelsController(ContacProDBContext context, IConfiguration iConfig)
         {
             _context = context;
+            configuration = iConfig;
+
         }
 
         // GET: api/Professionnels
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Professionnel>>> GetProfessionnels()
         {
+            var professionnels =  _context.Professionnels.Include(p => p.Expertises);
+            foreach(Professionnel p in professionnels)
+            {
+               /* foreach(Expertise e in p.Expertises)
+                {
+                    
+                }*/
+            }
+
+            return await professionnels.ToListAsync();
+        }
+
+
+        /*
+         public async Task<ActionResult<IEnumerable<Professionnel>>> GetProfessionnels()
+        {
             return await _context.Professionnels.ToListAsync();
         }
+             */
+
 
         // GET: api/Professionnels/5
         [HttpGet("{id}")]
@@ -44,30 +68,55 @@ namespace ContacPro_Serveur.Controllers
             return professionnel;
         }
 
-        //c'est pas conforme aux conventions RESTful, mais ça marche, alors que HttpClient ne permet pas d'envoyer un body dans un GET :/ 
-        [HttpPost("Identification")]
-        public async Task<ActionResult<IEnumerable<Professionnel>>> GetProfessionnel(Professionnel proRecherche)
+        
+
+        //pour chercher un professionnel par son expertise
+        [HttpGet("expertise/{motcle}")]
+        public async Task<ActionResult<IEnumerable<Professionnel>>> GetProfessionnel(string motcle)
         {
 
             var professionnel = await (from p in _context.Professionnels
-                                       where p.Courriel == proRecherche.Courriel
+                                       join expertise in _context.ProExps on p.UtilisateurID equals expertise.UtilisateurID
+                                       join exp in _context.Expertises on expertise.ExpertiseID equals exp.ExpertiseID
+                                       where exp.Valeur == motcle
                                        select p).ToListAsync();
-
-
-            if (professionnel == null || professionnel.Count < 1)
+            if (professionnel == null)
             {
                 return NotFound();
             }
 
-            if (professionnel[0].Mdp != proRecherche.Mdp)
-            {
-                Professionnel echec = new Professionnel();
-                echec.Nom = "mauvaise identification";
-                professionnel.Clear();
-                professionnel.Add(echec);
-            }
-
             return professionnel;
+        }
+       
+        [HttpGet("Identification")]
+        public async Task<ActionResult<Professionnel>> GetProfessionnel()
+        {
+            try
+            {
+                string email = Request.Headers["email"].First();
+                string password = Request.Headers["password"].ToString();
+
+                var response = await LoginProvider.GetToken(_context, configuration, email, password);
+                if (response.StatusCode == 200) // to be modified
+                {
+                    return Ok(response); // to be modified not authentifed code
+                }
+                else if (response.StatusCode == 400)
+                {
+                    return Unauthorized("UnAuthorized");
+                }
+                else
+                {
+                    return NotFound("User not found");
+                }
+
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+                return NotFound("catch clause");
+            }
         }
 
 
@@ -109,6 +158,8 @@ namespace ContacPro_Serveur.Controllers
         [HttpPost]
         public async Task<ActionResult<Professionnel>> PostProfessionnel(Professionnel professionnel)
         {
+           
+
             _context.Professionnels.Add(professionnel);
             await _context.SaveChangesAsync();
 

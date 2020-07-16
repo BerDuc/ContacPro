@@ -17,27 +17,35 @@ namespace ContacPro_Serveur
 {
     public class Startup
     {
+
+        readonly string MyAllowAnyOrigins = "_myAllowAnyOrigins";
+
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        readonly string MyAllowAnyOrigins = "_myAllowAnyOrigins";
 
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.AddCors(options =>
             {
                 options.AddPolicy(MyAllowAnyOrigins,
                 builder =>
                 {
                     builder.AllowAnyOrigin();
+                    builder.AllowAnyHeader();
+                    builder.AllowAnyMethod();
                 });
             });
+
             services.AddControllers();
+
 
             services.AddDbContext<ContacProDBContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("ContacPro_ServeurContext")));
