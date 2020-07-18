@@ -10,7 +10,8 @@ using ContacPro_Serveur.Models;
 using Newtonsoft.Json.Linq;
 using ContacPro_Serveur.Providers;
 using Microsoft.Extensions.Configuration;
-
+using System.Runtime.InteropServices;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace ContacPro_Serveur.Controllers
 {
@@ -33,16 +34,21 @@ namespace ContacPro_Serveur.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Professionnel>>> GetProfessionnels()
         {
+
+            return await _context.Professionnels.ToListAsync();
+
+            /* 
             var professionnels =  _context.Professionnels.Include(p => p.Expertises);
             foreach(Professionnel p in professionnels)
             {
-               /* foreach(Expertise e in p.Expertises)
+               foreach(Expertise e in p.Expertises)
                 {
                     
-                }*/
-            }
+                }
+        }
 
             return await professionnels.ToListAsync();
+            */
         }
 
 
@@ -68,18 +74,26 @@ namespace ContacPro_Serveur.Controllers
             return professionnel;
         }
 
-        
-
-        //pour chercher un professionnel par son expertise
-        [HttpGet("expertise/{motcle}")]
-        public async Task<ActionResult<IEnumerable<Professionnel>>> GetProfessionnel(string motcle)
+        [HttpGet("{recherche}/{motscles}")]
+        public async Task<ActionResult<IEnumerable<Professionnel>>> GetProfessionnel(string recherche, string motscles)
         {
 
+            List<string> liste_motscles = motscles.Split(";").ToList<string>();
+            foreach(string mot in liste_motscles)
+            {
+                Console.WriteLine(mot);
+            }
+
             var professionnel = await (from p in _context.Professionnels
+                                       where p.Nom == liste_motscles[0] || p.Prenom==liste_motscles[0]
+                                       select p).ToListAsync<Professionnel>();
+
+/*            var professionnel = await (from p in _context.Professionnels
                                        join expertise in _context.ProExps on p.UtilisateurID equals expertise.UtilisateurID
                                        join exp in _context.Expertises on expertise.ExpertiseID equals exp.ExpertiseID
                                        where exp.Valeur == motcle
                                        select p).ToListAsync();
+ */
             if (professionnel == null)
             {
                 return NotFound();
@@ -87,6 +101,9 @@ namespace ContacPro_Serveur.Controllers
 
             return professionnel;
         }
+
+
+   
        
         [HttpGet("Identification")]
         public async Task<ActionResult<Professionnel>> GetProfessionnel()
