@@ -9,6 +9,8 @@ namespace ContacPro_Serveur.Models
     {   
 
         public string AddrCv { get; set; }
+        public string Specialisation { get; set; }
+        public string Presentation { get; set; }
 
         public virtual ICollection<Entente> Ententes { get; set; }
         public virtual ICollection<Prestation> Prestations { get; set; }
