@@ -79,27 +79,39 @@ namespace ContacPro_Serveur.Controllers
         {
 
             List<string> liste_motscles = motscles.Split(";").ToList<string>();
-            foreach(string mot in liste_motscles)
+
+            IQueryable<Professionnel> query;
+
+            switch (recherche)
             {
-                Console.WriteLine(mot);
+                case ("Nom"):
+                    query = (from p in _context.Professionnels
+                             where p.Nom == liste_motscles[0] || p.Prenom == liste_motscles[0]
+                             select p);
+                    break;
+                case ("Spécialité"):
+                    query = (from p in _context.Professionnels
+                           where p.Specialisation == liste_motscles[0]
+                           select p);
+                    break;
+                default: return NotFound();
             }
 
-            var professionnel = await (from p in _context.Professionnels
-                                       where p.Nom == liste_motscles[0] || p.Prenom==liste_motscles[0]
-                                       select p).ToListAsync<Professionnel>();
+            var professionnels = await query.ToListAsync<Professionnel>();
 
-/*            var professionnel = await (from p in _context.Professionnels
-                                       join expertise in _context.ProExps on p.UtilisateurID equals expertise.UtilisateurID
-                                       join exp in _context.Expertises on expertise.ExpertiseID equals exp.ExpertiseID
-                                       where exp.Valeur == motcle
-                                       select p).ToListAsync();
- */
-            if (professionnel == null)
+            
+            /*            var professionnel = await (from p in _context.Professionnels
+                                                   join expertise in _context.ProExps on p.UtilisateurID equals expertise.UtilisateurID
+                                                   join exp in _context.Expertises on expertise.ExpertiseID equals exp.ExpertiseID
+                                                   where exp.Valeur == motcle
+                                                   select p).ToListAsync();
+             */
+            if (professionnels == null)
             {
                 return NotFound();
             }
 
-            return professionnel;
+            return professionnels;
         }
 
 
